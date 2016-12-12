@@ -2,7 +2,7 @@
 require('babel-polyfill');
 
 // import * as actions from './actions/index';
-import {createStore} from 'redux';
+import {createStore, combineReducers} from 'redux';
 
 const NEWGAME = 'NEWGAME';
 const newGame = () => ({
@@ -11,23 +11,51 @@ const newGame = () => ({
   feedback: "Make your first guess",
 });
 
-const guessNumberReducer = (state = {}, action) => {
-  console.log('state', state);
-  console.log('action', action);
+const GUESS_NUMBER = 'GUESS_NUMBER';
+const guess = guess => ({
+  type: GUESS_NUMBER,
+  guess: guess
+});
+
+const initialState = {};
+
+const createGameReducer = (state = initialState, action) => {
   if (action.type === NEWGAME) {
     return Object.assign({}, state, {
       numberToGuess: action.target,
-      theFeebBack: action.feedback
+      theFeedBack: action.feedback
     });
   }
+  return state;
 };
 
-const store = createStore(guessNumberReducer);
+//how do we pass it the existing state?
+const guessNumberReducer = (state = initialState, action) => {
+  if (action.type === GUESS_NUMBER) {
+
+    return Object.assign({}, state, {
+      guess: action.guess
+    });
+  }
+  return state;
+}
+
+
+const reducer = combineReducers({
+    newGame: createGameReducer,
+    guessNumber: guessNumberReducer
+})
+
+const store = createStore(reducer);
+
+store.dispatch(newGame());
+store.dispatch(guess(34));
+
+
+console.log(store.getState())
 
 let unsubscribe = store.subscribe(()=>
   console.log(store.getState())
 );
-
-store.dispatch(newGame());
 
 unsubscribe();
