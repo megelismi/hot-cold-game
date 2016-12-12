@@ -38,13 +38,13 @@ const guessNumberReducer = (state = initialState, action) => {
     });
   }
   return state;
-}
+};
 
 
 const reducer = combineReducers({
     newGame: createGameReducer,
     guessNumber: guessNumberReducer
-})
+});
 
 const store = createStore(reducer);
 
